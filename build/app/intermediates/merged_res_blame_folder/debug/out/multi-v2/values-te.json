@@ -1,0 +1,36 @@
+{
+    "logs": [
+        {
+            "outputFile": "com.example.tiktokclone.app-mergeDebugResources-10:/values-te/values-te.xml",
+            "map": [
+                {
+                    "source": "/Users/pawan/.gradle/caches/transforms-3/7e9df2ac2213a6bd3cef0f2f27870d79/transformed/core-1.6.0/res/values-te/values-te.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endColumns": "100",
+                        "endOffsets": "151"
+                    },
+                    "to": {
+                        "startLines": "6",
+                        "startColumns": "4",
+                        "startOffsets": "490",
+                        "endColumns": "100",
+                        "endOffsets": "586"
+                    }
+                },
+                {
+                    "source": "/Users/pawan/.gradle/caches/transforms-3/d12883dde0390e08dd2a1192741cec1b/transformed/browser-1.5.0/res/values-te/values-te.xml",
+                    "from": {
+                        "startLines": "2,3,4,5",
+                        "startColumns": "4,4,4,4",
+                        "startOffsets": "55,166,272,383",
+                        "endColumns": "110,105,110,106",
+                        "endOffsets": "161,267,378,485"
+                    }
+                }
+            ]
+        }
+    ]
+}
