@@ -1,4 +1,0 @@
-#Tue Feb 13 10:49:04 IST 2024
-base.0=/Users/pawan/StudioProjects/tiktokclone/build/app/intermediates/dex/debug/mergeDexDebug/classes.dex
-path.0=classes.dex
-renamed.0=classes.dex
