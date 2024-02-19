@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:tiktokclone/core/constants/constants.dart';
 
 class AppUtils {
@@ -30,6 +32,32 @@ class AppUtils {
       return AppString.enterYourPassword;
     }
   }
+  static String generateUsername(String familyName) {
+    Random random = Random();
+    int threeDigitNumber = random.nextInt(900) + 100;
+    return '$familyName$threeDigitNumber';
+  }
+
+  static String extractFirstName(String fullName) {
+    List<String> nameParts = fullName.split(' ');
+    if (nameParts.isNotEmpty) {
+      return nameParts[0];
+    } else {
+      return '';
+    }
+  }
+
+  static String extractLastName(String fullName) {
+    List<String> nameParts = fullName.split(' ');
+    if (nameParts.length == 2) {
+      return nameParts[1];
+    } else if (nameParts.isNotEmpty) {
+      return nameParts[0];
+    } else {
+      return '';
+    }
+  }
+
 
   static String? fieldEmpty(String? value) {
     if (value!.isNotEmpty) {

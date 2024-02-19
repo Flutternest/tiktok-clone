@@ -7,7 +7,7 @@ class AppTheme {
 final commonTheme = ThemeData(
   appBarTheme: const AppBarTheme(elevation: 0, color: Colors.white),
   elevatedButtonTheme: ElevatedButtonThemeData(
-      style: ElevatedButton.styleFrom(backgroundColor: Colors.grey.shade300)),
+      style: ElevatedButton.styleFrom(backgroundColor: Colors.pink)),
   inputDecorationTheme: InputDecorationTheme(
     fillColor: Colors.white,
     filled: true,

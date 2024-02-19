@@ -1,23 +1,38 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:tiktokclone/core/theme/text_theme.dart';
 import 'package:tiktokclone/core/utility/app_utility.dart';
 import 'package:tiktokclone/core/utility/design_utility.dart';
+import 'package:tiktokclone/feature/auth/model/user.dart';
+import 'package:tiktokclone/feature/auth/repositary/auth_repositary.dart';
 import 'package:tiktokclone/feature/global_widgets/common_padding.dart';
 
-class SignUp extends StatefulWidget {
+class SignUp extends ConsumerStatefulWidget {
   SignUp({super.key});
 
   @override
-  State<SignUp> createState() => _SignUpState();
+  ConsumerState<SignUp> createState() => _SignUpState();
 }
 
-class _SignUpState extends State<SignUp> {
+class _SignUpState extends ConsumerState<SignUp> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController firstNameController = TextEditingController();
   final TextEditingController lastNameController = TextEditingController();
-
+  final _formKey = GlobalKey<FormState>();
+  bool isLoading = false;
   bool passwordVisibility = false;
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    emailController.dispose();
+    passwordController.dispose();
+    firstNameController.dispose();
+    lastNameController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,90 +54,131 @@ class _SignUpState extends State<SignUp> {
               color: Colors.black, fontWeight: FontWeight.w700, fontSize: 25),
         ),
       ),
-      body: CommonPadding(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              'First Name',
-              style: appTheme.headlineMedium?.copyWith(
-                fontSize: 15,
-              ),
-            ),
-            verticalSpaceTiny,
-            TextFormField(
-              keyboardType: TextInputType.name,
-              validator: AppUtils.fieldEmpty,
-              controller: firstNameController,
-              decoration: const InputDecoration(hintText: 'First Name'),
-            ),
-            verticalSpaceSmall,
-            Text(
-              'Last Name',
-              style: appTheme.headlineMedium?.copyWith(
-                fontSize: 15,
-              ),
-            ),
-            verticalSpaceTiny,
-            TextFormField(
-              keyboardType: TextInputType.name,
-              validator: AppUtils.emailValidate,
-              controller: lastNameController,
-              decoration: const InputDecoration(hintText: 'Last Name'),
-            ),
-            verticalSpaceSmall,
-            Text(
-              'Email',
-              style: appTheme.headlineMedium?.copyWith(
-                fontSize: 15,
-              ),
-            ),
-            verticalSpaceTiny,
-            TextFormField(
-              keyboardType: TextInputType.emailAddress,
-              validator: AppUtils.emailValidate,
-              controller: emailController,
-              decoration: const InputDecoration(hintText: 'Enter mail'),
-            ),
-            verticalSpaceSmall,
-            Text(
-              'Password',
-              style: appTheme.headlineMedium?.copyWith(
-                fontSize: 15,
-              ),
-            ),
-            verticalSpaceTiny,
-            TextFormField(
-              controller: passwordController,
-              validator: AppUtils.passwordValidate,
-              obscureText: passwordVisibility,
-              obscuringCharacter: '*',
-              decoration: InputDecoration(
-                  suffixIcon: InkWell(
-                    onTap: () {
-                      setState(() {
-                        passwordVisibility = !passwordVisibility;
-                      });
-                    },
-                    child: Icon(
-                      passwordVisibility
-                          ? Icons.visibility_off
-                          : Icons.visibility,
-                      color: const Color(0xffD0DCC7),
-                    ),
-                  ),
-                  hintText: 'password'),
-            ),
-            verticalSpaceRegular,
-            ElevatedButton(
-                onPressed: () {},
-                child: Text(
-                  'Login',
+      body: Form(
+        key: _formKey,
+        child: CommonPadding(
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                SizedBox(
+                  height: 150,
+                ),
+                Text(
+                  'First Name',
                   style: appTheme.headlineMedium?.copyWith(
-                      color: Colors.grey.shade500, fontWeight: FontWeight.w700),
-                )),
-          ],
+                    fontSize: 15,
+                  ),
+                ),
+                verticalSpaceTiny,
+                TextFormField(
+                  keyboardType: TextInputType.name,
+                  validator: AppUtils.fieldEmpty,
+                  controller: firstNameController,
+                  decoration: const InputDecoration(hintText: 'First Name'),
+                ),
+                verticalSpaceSmall,
+                Text(
+                  'Last Name',
+                  style: appTheme.headlineMedium?.copyWith(
+                    fontSize: 15,
+                  ),
+                ),
+                verticalSpaceTiny,
+                TextFormField(
+                  keyboardType: TextInputType.name,
+                  validator: AppUtils.fieldEmpty,
+                  controller: lastNameController,
+                  decoration: const InputDecoration(hintText: 'Last Name'),
+                ),
+                verticalSpaceSmall,
+                Text(
+                  'Email',
+                  style: appTheme.headlineMedium?.copyWith(
+                    fontSize: 15,
+                  ),
+                ),
+                verticalSpaceTiny,
+                TextFormField(
+                  keyboardType: TextInputType.emailAddress,
+                  validator: AppUtils.emailValidate,
+                  controller: emailController,
+                  decoration: const InputDecoration(hintText: 'Enter mail'),
+                ),
+                verticalSpaceSmall,
+                Text(
+                  'Password',
+                  style: appTheme.headlineMedium?.copyWith(
+                    fontSize: 15,
+                  ),
+                ),
+                verticalSpaceTiny,
+                TextFormField(
+                  controller: passwordController,
+                  validator: AppUtils.passwordValidate,
+                  obscureText: passwordVisibility,
+                  obscuringCharacter: '*',
+                  decoration: InputDecoration(
+                      suffixIcon: InkWell(
+                        onTap: () {
+                          setState(() {
+                            passwordVisibility = !passwordVisibility;
+                          });
+                        },
+                        child: Icon(
+                          passwordVisibility
+                              ? Icons.visibility_off
+                              : Icons.visibility,
+                          color: const Color(0xffD0DCC7),
+                        ),
+                      ),
+                      hintText: 'password'),
+                ),
+                verticalSpaceRegular,
+                ElevatedButton(
+                    style:
+                        ElevatedButton.styleFrom(backgroundColor: Colors.pink),
+                    onPressed: () async {
+                      if (_formKey.currentState!.validate()) {
+                        setState(() {
+                          isLoading = true;
+                        });
+                        final user = await ref
+                            .read(authRepositaryProvider)
+                            .signUp(
+                                firstName: firstNameController.text.trim(),
+                                lastName: lastNameController.text.trim(),
+                                email: emailController.text.trim(),
+                                password: passwordController.text.trim());
+                        if (user.isRight) {
+                          setState(() {
+                            isLoading = false;
+                          });
+                          Navigator.pushNamed(context, '/basePage');
+                        } else if (user.isLeft) {
+                          Fluttertoast.showToast(msg: user.left.message);
+                          setState(() {
+                            isLoading = false;
+                          });
+                        }
+                      }
+                    },
+                    child: isLoading
+                        ? const SizedBox(
+                            height: 30,
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                            ),
+                          )
+                        : Text(
+                            'Login',
+                            style: appTheme.headlineMedium?.copyWith(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w700),
+                          )),
+              ],
+            ),
+          ),
         ),
       ),
     ));
