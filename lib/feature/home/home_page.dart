@@ -1,89 +1,62 @@
-import 'dart:developer';
-
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:tiktokclone/feature/home/modals/reel_comment_model.dart';
-import 'package:tiktokclone/feature/home/modals/reel_model.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tiktokclone/feature/home/shimmer/home_page_shimmer.dart';
 import 'package:tiktokclone/feature/home/widgets/reels_viewer.dart';
+import 'package:tiktokclone/feature/post/provider/post_provider.dart';
 
-class HomePage extends StatelessWidget {
+@RoutePage()
+class HomePage extends ConsumerStatefulWidget {
   HomePage({super.key});
-  List<ReelModel> reelsList = [
-    ReelModel(
-        'https://assets.mixkit.co/videos/preview/mixkit-tree-with-yellow-flowers-1173-large.mp4',
-        'Darshan Patil',
-        likeCount: 2000,
-        isLiked: true,
-        musicName: 'In the name of Love',
-        reelDescription: "Life is better when you're laughing.",
-        profileUrl:
-            'https://opt.toiimg.com/recuperator/img/toi/m-69257289/69257289.jpg',
-        commentList: [
-          ReelCommentModel(
-            comment: 'Nice...',
-            userProfilePic:
-                'https://opt.toiimg.com/recuperator/img/toi/m-69257289/69257289.jpg',
-            userName: 'Darshan',
-            commentTime: DateTime.now(),
-          ),
-          ReelCommentModel(
-            comment: 'Superr...',
-            userProfilePic:
-                'https://opt.toiimg.com/recuperator/img/toi/m-69257289/69257289.jpg',
-            userName: 'Darshan',
-            commentTime: DateTime.now(),
-          ),
-          ReelCommentModel(
-            comment: 'Great...',
-            userProfilePic:
-                'https://opt.toiimg.com/recuperator/img/toi/m-69257289/69257289.jpg',
-            userName: 'Darshan',
-            commentTime: DateTime.now(),
-          ),
-        ]),
-    ReelModel(
-      'https://assets.mixkit.co/videos/preview/mixkit-father-and-his-little-daughter-eating-marshmallows-in-nature-39765-large.mp4',
-      'Rahul',
-      musicName: 'In the name of Love',
-      reelDescription: "Life is better when you're laughing.",
-      profileUrl:
-          'https://opt.toiimg.com/recuperator/img/toi/m-69257289/69257289.jpg',
-    ),
-    ReelModel(
-      'https://assets.mixkit.co/videos/preview/mixkit-mother-with-her-little-daughter-eating-a-marshmallow-in-nature-39764-large.mp4',
-      'Rahul',
-    ),
-  ];
+  @override
+  ConsumerState<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends ConsumerState<HomePage>
+    with WidgetsBindingObserver {
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused) {
+      // App is paused (backgrounded)
+      print('App is paused');
+    } else if (state == AppLifecycleState.resumed) {
+      // App is resumed (foregrounded)
+      print('App is resumed');
+    } else if (state == AppLifecycleState.inactive) {
+      // App is inactive
+      print('App is inactive');
+    } else if (state == AppLifecycleState.detached) {
+      // App is terminated
+      print('App is terminated');
+    }
+  }
+
+  @override
+  void initState() {
+    WidgetsBinding.instance.addObserver(this);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
+    final reels = ref.watch(fetchreelsProvider);
     return SafeArea(
-        child: Scaffold(
-      body: ReelsViewer(
-        reelsList: reelsList,
-        onShare: (url) {
-          log('Shared reel url ==> $url');
-        },
-        onLike: (url) {
-          log('Liked reel url ==> $url');
-        },
-        onFollow: () {
-          log('======> Clicked on follow <======');
-        },
-        onComment: (comment) {
-          log('Comment on reel ==> $comment');
-        },
-        onClickMoreBtn: () {
-          log('======> Clicked on more option <======');
-        },
-        onClickBackArrow: () {
-          log('======> Clicked on back arrow <======');
-        },
-        onIndexChanged: (index) {
-          log('======> Current Index ======> $index <========');
-        },
-        showProgressIndicator: true,
-        showVerifiedTick: false,
+      child: Scaffold(
+        body: reels.when(
+            data: (data) => ReelsViewer(
+                  onComment: (value) {},
+                  reelsList: data.isRight ? data.right : [],
+                  showVerifiedTick: false,
+                ),
+            error: (e, st) => Text(e.toString()),
+            loading: () => const HomePageShimmer()),
       ),
-    ));
+    );
   }
 }

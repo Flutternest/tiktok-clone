@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:tiktokclone/feature/home/components/user_profile_image.dart';
-import 'package:tiktokclone/feature/home/modals/reel_comment_model.dart';
+import 'package:tiktokclone/feature/comment/modal/reel_comment_model.dart';
 
 import '../utils/date_formatter.dart';
 
 class CommentItem extends StatelessWidget {
-  final ReelCommentModel commentItem;
   const CommentItem({Key? key, required this.commentItem}) : super(key: key);
-
+  final ReelCommentModel commentItem;
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -19,7 +18,7 @@ class CommentItem extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              UserProfileImage(profileUrl: commentItem.userProfilePic),
+              UserProfileImage(profileUrl: commentItem.commentId),
               const SizedBox(width: 7),
               Flexible(
                 child: Container(
@@ -40,12 +39,12 @@ class CommentItem extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Row(
+                            const Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 Text(
-                                  commentItem.userName,
-                                  style: const TextStyle(
+                                  '',
+                                  style: TextStyle(
                                     fontSize: 14,
                                     color: Color.fromARGB(255, 41, 35, 35),
                                   ),
@@ -53,7 +52,7 @@ class CommentItem extends StatelessWidget {
                               ],
                             ),
                             Text(
-                              commentItem.comment,
+                              commentItem.commentText,
                               style: const TextStyle(
                                 fontSize: 12,
                                 color: Color.fromARGB(255, 69, 67, 67),

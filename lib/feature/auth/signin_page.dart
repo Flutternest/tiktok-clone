@@ -1,138 +1,149 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:sign_in_with_apple/sign_in_with_apple.dart';
-import 'package:tiktokclone/core/constants/paths.dart';
-import 'package:tiktokclone/core/theme/text_theme.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:tiktokclone/core/router/app_router.dart';
+import 'package:tiktokclone/core/utility/app_utility.dart';
 import 'package:tiktokclone/core/utility/design_utility.dart';
+import 'package:tiktokclone/feature/auth/repositary/auth_repositary.dart';
 import 'package:tiktokclone/feature/global_widgets/common_padding.dart';
 
-class LoginPage extends StatelessWidget {
-  const LoginPage({super.key});
+import '../../core/theme/text_theme.dart';
+
+@RoutePage()
+class SignInPage extends ConsumerStatefulWidget {
+  const SignInPage({super.key});
+  @override
+  ConsumerState<SignInPage> createState() => _LoginEmailState();
+}
+
+class _LoginEmailState extends ConsumerState<SignInPage> {
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+  bool isLoading = false;
+
+  bool passwordVisibility = false;
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
         child: Scaffold(
       appBar: AppBar(
-        title: Center(
-            child: Text(
-          'TikTok',
+        leading: InkWell(
+          onTap: () {
+            context.router.pop();
+          },
+          child: const Icon(
+            Icons.arrow_back,
+            color: Colors.black,
+          ),
+        ),
+        title: Text(
+          'Login',
           style: appTheme.headlineMedium?.copyWith(
-              color: Colors.black, fontWeight: FontWeight.w700, fontSize: 30),
-        )),
+              color: Colors.black, fontWeight: FontWeight.w700, fontSize: 25),
+        ),
       ),
       body: CommonPadding(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Column(
-              children: [
-                Center(
-                  child: Text('Login in to TikTok',
-                      style:
-                          appTheme.headlineSmall?.copyWith(letterSpacing: .5)),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                'Email',
+                style: appTheme.headlineMedium?.copyWith(
+                  fontSize: 15,
                 ),
-                Text(
-                  'Manage your account, check notifications, comment om video and more.',
-                  textAlign: TextAlign.center,
-                  style: appTheme.headlineMedium?.copyWith(color: Colors.grey),
+              ),
+              verticalSpaceTiny,
+              TextFormField(
+                keyboardType: TextInputType.emailAddress,
+                validator: AppUtils.emailValidate,
+                controller: emailController,
+                decoration: const InputDecoration(hintText: 'Enter email'),
+              ),
+              verticalSpaceSmall,
+              Text(
+                'Password',
+                style: appTheme.headlineMedium?.copyWith(
+                  fontSize: 15,
                 ),
-                verticalSpaceSmall,
-              ],
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                OutlinedButton(
-                    onPressed: () {
-                      Navigator.pushNamed(context, '/loginemail');
-                    },
-                    child: Text(
-                      'Email',
-                      style: appTheme.headlineMedium
-                          ?.copyWith(color: Colors.black),
-                    )),
-                verticalSpaceSmall,
-                SignInWithAppleButton(onPressed: () {
-                  Navigator.pushNamed(context, '/homepage');
-                }),
-                verticalSpaceSmall,
-                OutlinedButton(
-                    style: OutlinedButton.styleFrom(),
-                    onPressed: () {},
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SvgPicture.asset(SvgPaths.googleIcon),
-                        horizontalSpaceTiny,
-                        Text(
-                          'Continue with google',
-                          style: appTheme.headlineMedium
-                              ?.copyWith(color: Colors.black),
-                        ),
-                      ],
-                    )),
-              ],
-            ),
-            Column(
-              children: [
-                Text.rich(TextSpan(children: [
-                  TextSpan(
-                    text: 'By continuing you agree to our ',
-                    style: appTheme.headlineMedium
-                        ?.copyWith(color: Colors.grey.shade500, fontSize: 15),
-                  ),
-                  TextSpan(
-                      text: 'Terms of service',
-                      style: appTheme.headlineSmall?.copyWith(
-                          fontSize: 16, fontWeight: FontWeight.w600)),
-                  TextSpan(
-                    text: ' and acknowledge het you have read our',
-                    style: appTheme.headlineMedium
-                        ?.copyWith(color: Colors.grey.shade500, fontSize: 15),
-                  ),
-                  TextSpan(
-                      text: ' Privacy Policy',
-                      style: appTheme.headlineSmall?.copyWith(
-                          fontSize: 16, fontWeight: FontWeight.w600)),
-                  TextSpan(
-                    text: ' to learn how e collect , use and share your data',
-                    style: appTheme.headlineMedium
-                        ?.copyWith(color: Colors.grey.shade500, fontSize: 15),
-                  ),
-                ])),
-                verticalSpaceRegular,
-                SizedBox(
-                  height: 70,
-                  child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.grey.shade200),
-                      onPressed: () {
-                        Navigator.pushNamed(context, '/signup');
+              ),
+              verticalSpaceTiny,
+              TextFormField(
+                controller: passwordController,
+                validator: AppUtils.passwordValidate,
+                obscureText: passwordVisibility,
+                obscuringCharacter: '*',
+                decoration: InputDecoration(
+                    suffixIcon: InkWell(
+                      onTap: () {
+                        setState(() {
+                          passwordVisibility = !passwordVisibility;
+                        });
                       },
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Text(
-                            "Don't have an account?",
-                            style: TextStyle(color: Colors.black),
-                          ),
-                          Text(
-                            ' Sign Up',
-                            style: appTheme.headlineMedium
-                                ?.copyWith(color: Colors.pink),
-                          ),
-                        ],
-                      )),
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-              ],
-            )
-          ],
+                      child: Icon(
+                        passwordVisibility
+                            ? Icons.visibility_off
+                            : Icons.visibility,
+                        color: const Color(0xffD0DCC7),
+                      ),
+                    ),
+                    hintText: 'password'),
+              ),
+              Align(
+                alignment: Alignment.bottomLeft,
+                child: TextButton(
+                    onPressed: () {},
+                    child: Text(
+                      'Forget Password ?',
+                      style: appTheme.headlineMedium?.copyWith(
+                          color: Colors.black, fontWeight: FontWeight.w700),
+                    )),
+              ),
+              verticalSpaceSmall,
+              ElevatedButton(
+                  onPressed: () async {
+                    if (_formKey.currentState!.validate()) {
+                      setState(() {
+                        isLoading = true;
+                      });
+                      final user = await ref
+                          .read(authRepositaryProvider)
+                          .signIn(
+                              email: emailController.text.trim(),
+                              password: passwordController.text.trim());
+                      if (user.isLeft) {
+                        setState(() {
+                          isLoading = false;
+                        });
+                        Fluttertoast.showToast(msg: user.left.message);
+                      } else if (user.isRight) {
+                        setState(() {
+                          isLoading = false;
+                        });
+                        context.router.push(BaseRoute());
+                      }
+                    }
+                  },
+                  child: isLoading
+                      ? const SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                          ))
+                      : Text(
+                          'Login',
+                          style: appTheme.headlineMedium?.copyWith(
+                              color: Colors.white, fontWeight: FontWeight.w700),
+                        )),
+            ],
+          ),
         ),
       ),
     ));

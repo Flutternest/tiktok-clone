@@ -3,9 +3,11 @@ import 'package:tiktokclone/core/constants/constants.dart';
 import 'package:tiktokclone/core/theme/text_theme.dart';
 import 'package:tiktokclone/core/utility/design_utility.dart';
 
-
 class UserListTile extends StatelessWidget {
-  const UserListTile({super.key});
+  const UserListTile({super.key, required this.userName, required this.firstname, required this.lastName});
+  final String userName;
+  final String firstname;
+  final String lastName;
 
   @override
   Widget build(BuildContext context) {
@@ -31,12 +33,12 @@ class UserListTile extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "userName",
+                  userName,
                   style: appTheme.displaySmall
                       ?.copyWith(fontSize: 15, color: Colors.black),
                 ),
                 Text(
-                  'Pawan kumar',
+                  '$firstname $lastName',
                   style: appTheme.headlineMedium?.copyWith(
                       fontSize: 13,
                       fontWeight: FontWeight.w600,

@@ -18,7 +18,7 @@ class UserData {
     required this.createdTime,
     required this.email,
     required this.bio,
-    required this.profileUrl,
+  required this.profileUrl,
   });
 
   UserData copyWith({
@@ -49,7 +49,7 @@ class UserData {
       'lastName': lastName,
       'userName': userName,
       'uid': uid,
-      'createdTime': createdTime.toUtc(),
+      'createdTime': createdTime.toUtc().toIso8601String(),
       'email': email,
       'bio': bio,
       'profileUrl': profileUrl,
@@ -62,7 +62,7 @@ class UserData {
       lastName: map['lastName'],
       userName: map['userName'],
       uid: map['uid'],
-      createdTime: map['createdTime'],
+      createdTime: (DateTime.parse(map['createdTime'])).toLocal(),
       email: map['email'],
       bio: map['bio'],
       profileUrl: map['profileUrl'],

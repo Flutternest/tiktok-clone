@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:tiktokclone/feature/home/components/comment_bottomsheet.dart';
+import 'package:tiktokclone/feature/comment/views/comment_bottomsheet.dart';
 import 'package:tiktokclone/feature/home/components/user_profile_image.dart';
 import 'package:tiktokclone/feature/home/modals/reel_model.dart';
 import 'package:tiktokclone/feature/home/utils/convert_numbers_to_short.dart';
-
 
 class ScreenOptions extends StatelessWidget {
   final ReelModel item;
@@ -50,8 +49,8 @@ class ScreenOptions extends StatelessWidget {
                           UserProfileImage(profileUrl: item.profileUrl ?? ''),
                         if (item.profileUrl == null)
                           const CircleAvatar(
-                            child: Icon(Icons.person, size: 18),
                             radius: 16,
+                            child: Icon(Icons.person, size: 18),
                           ),
                         const SizedBox(width: 6),
                         Text(item.userName,
@@ -115,14 +114,13 @@ class ScreenOptions extends StatelessWidget {
                     icon:
                         const Icon(Icons.comment_rounded, color: Colors.white),
                     onPressed: () {
-                      if (onComment != null) {
-                        showModalBottomSheet(
-                            barrierColor: Colors.transparent,
-                            context: context,
-                            builder: (ctx) => CommentBottomSheet(
-                                commentList: item.commentList ?? [],
-                                onComment: onComment));
-                      }
+                      showModalBottomSheet(
+                          isScrollControlled: true,
+                          barrierColor: Colors.transparent,
+                          context: context,
+                          builder: (ctx) => CommentBottomSheet(postId: '',
+                              
+                              ));
                     },
                   ),
                   Text(

@@ -2,10 +2,11 @@ import 'package:card_swiper/card_swiper.dart';
 import 'package:flutter/material.dart';
 import 'package:tiktokclone/feature/home/modals/reel_model.dart';
 import 'package:tiktokclone/feature/home/widgets/reels_page.dart';
+import 'package:tiktokclone/feature/post/modal/post.dart';
 
 class ReelsViewer extends StatefulWidget {
   /// use reel model and provide list of reels, list contains reels object, object contains url and other parameters
-  final List<ReelModel> reelsList;
+  final List<Post> reelsList;
 
   /// use to show/hide verified tick, by default true
   final bool showVerifiedTick;
@@ -87,6 +88,8 @@ class _ReelsViewerState extends State<ReelsViewer> {
                   showVerifiedTick: widget.showVerifiedTick,
                   swiperController: controller,
                   showProgressIndicator: widget.showProgressIndicator,
+                  createdBy: widget.reelsList[index].postedBy,
+                  thumbNailUrl: widget.reelsList[index].thumbNailUrl,
                 );
               },
               controller: controller,

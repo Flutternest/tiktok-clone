@@ -1,7 +1,9 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:tiktokclone/core/router/app_router.dart';
 import 'package:tiktokclone/core/theme/text_theme.dart';
 import 'package:tiktokclone/core/utility/app_utility.dart';
 import 'package:tiktokclone/core/utility/design_utility.dart';
@@ -9,14 +11,15 @@ import 'package:tiktokclone/feature/auth/model/user.dart';
 import 'package:tiktokclone/feature/auth/repositary/auth_repositary.dart';
 import 'package:tiktokclone/feature/global_widgets/common_padding.dart';
 
-class SignUp extends ConsumerStatefulWidget {
-  SignUp({super.key});
+@RoutePage()
+class SignUpPage extends ConsumerStatefulWidget {
+  SignUpPage({super.key});
 
   @override
-  ConsumerState<SignUp> createState() => _SignUpState();
+  ConsumerState<SignUpPage> createState() => _SignUpState();
 }
 
-class _SignUpState extends ConsumerState<SignUp> {
+class _SignUpState extends ConsumerState<SignUpPage> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController firstNameController = TextEditingController();
@@ -41,7 +44,7 @@ class _SignUpState extends ConsumerState<SignUp> {
       appBar: AppBar(
         leading: InkWell(
           onTap: () {
-            Navigator.pop(context);
+            context.router.pop();
           },
           child: const Icon(
             Icons.arrow_back,
@@ -61,7 +64,7 @@ class _SignUpState extends ConsumerState<SignUp> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                SizedBox(
+                const SizedBox(
                   height: 150,
                 ),
                 Text(
@@ -154,7 +157,7 @@ class _SignUpState extends ConsumerState<SignUp> {
                           setState(() {
                             isLoading = false;
                           });
-                          Navigator.pushNamed(context, '/basePage');
+                          context.router.push(const BaseRoute());
                         } else if (user.isLeft) {
                           Fluttertoast.showToast(msg: user.left.message);
                           setState(() {
@@ -165,13 +168,14 @@ class _SignUpState extends ConsumerState<SignUp> {
                     },
                     child: isLoading
                         ? const SizedBox(
-                            height: 30,
+                            height: 20,
+                            width: 20,
                             child: CircularProgressIndicator(
                               color: Colors.white,
                             ),
                           )
                         : Text(
-                            'Login',
+                            'SignUp',
                             style: appTheme.headlineMedium?.copyWith(
                                 color: Colors.white,
                                 fontWeight: FontWeight.w700),

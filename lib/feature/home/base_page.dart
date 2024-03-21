@@ -1,13 +1,23 @@
+import 'dart:io';
+
+import 'package:auto_route/auto_route.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:tiktokclone/core/constants/paths.dart';
+import 'package:tiktokclone/core/router/app_router.dart';
 import 'package:tiktokclone/core/theme/text_theme.dart';
+import 'package:tiktokclone/core/utility/app_utility.dart';
 import 'package:tiktokclone/core/utility/design_utility.dart';
 import 'package:tiktokclone/feature/home/home_page.dart';
 import 'package:tiktokclone/feature/inbox/inbox.dart';
-import 'package:tiktokclone/feature/profile/profile_page.dart';
+import 'package:tiktokclone/feature/post/creating_post.dart';
+import 'package:tiktokclone/feature/post/video_editor.dart';
+import 'package:tiktokclone/feature/user/profile_page.dart';
 import 'package:tiktokclone/feature/search/search_screen.dart';
 
+@RoutePage()
 class BasePage extends StatefulWidget {
   const BasePage({
     super.key,
@@ -42,9 +52,11 @@ class _BasePageState extends State<BasePage> {
   Widget build(BuildContext context) {
     final pages = [
       HomePage(),
-      SearchScreen(),
-      InboxPage(),
-      ProfilePage(),
+       SearchScreenPage(),
+       InboxPage(),
+      ProfilePage(
+        uid: FirebaseAuth.instance.currentUser?.uid ?? '',
+      ),
     ];
 
     return SafeArea(
@@ -93,18 +105,16 @@ class _BasePageState extends State<BasePage> {
                         verticalSpaceTiny,
                         Text(
                           'Discover',
-                          style: appTheme.displaySmall?.copyWith(
-                              color: _selectedIndex == 1
-                                  ? Colors.black
-                                  : Colors.grey.shade700,
+                          style: appTheme.displaySmall?.copyWith(color: _selectedIndex == 1? Colors.black: Colors.grey.shade700,
                               fontSize: 10),
                         )
                       ],
                     ),
                   ),
                   InkWell(
-                    onTap: () {
-                      Navigator.pushNamed(context, '/creatingPost');
+                    onTap: () async {
+                      final xfile = await AppUtils.videoPickerFromCamera();
+                      context.router.push(CreatingPostRoute(xfile: xfile!));
                     },
                     child: Container(
                         decoration: BoxDecoration(

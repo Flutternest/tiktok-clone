@@ -59,10 +59,12 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyBwPzyARqBdssKudxQYzNDb_lKsOKHH2J0',
-    appId: '1:140850487100:ios:608a0c5be7984b61180839',
+    appId: '1:140850487100:ios:9cdece92bba6c062180839',
     messagingSenderId: '140850487100',
     projectId: 'tiktokclone-6d255',
     storageBucket: 'tiktokclone-6d255.appspot.com',
-    iosBundleId: 'com.example.tiktokclone',
+    androidClientId: '140850487100-nbi5i8phelqckmvnt8ahoi4ibantftut.apps.googleusercontent.com',
+    iosClientId: '140850487100-ipbfn9qdaev9k22vt0ef4sbriado4n4d.apps.googleusercontent.com',
+    iosBundleId: 'com.example.tiktokreel',
   );
 }

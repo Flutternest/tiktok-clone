@@ -2,28 +2,19 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:either_dart/either.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:tiktokclone/core/utility/app_utility.dart';
 import 'package:tiktokclone/feature/auth/exception/failure.dart';
+import 'package:tiktokclone/feature/auth/model/apple_login_detail.dart';
 import 'package:tiktokclone/feature/auth/model/user.dart';
+import 'package:tiktokclone/feature/auth/provider/auth_provider.dart';
 import 'package:tiktokclone/feature/auth/repositary/auth_repositary.dart';
 
 class FirebaseAuthRepositary implements AuthRepositary {
   FirebaseAuthRepositary({required this.auth, required this.firestore});
-  FirebaseAuth auth;
-  FirebaseFirestore firestore;
-  // @override
-  // Future<void> appleSignIn() {
-  //   // TODO: implement appleSignIn
-  //   throw UnimplementedError();
-  // }
 
-  // @override
-  // Future<Either<Failure, UserCredential>> googleSignIn() async {
-  //   final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-  //   final GoogleSignInAuthentication googleAuth =  await googleUser!.authentication;
-  //   final credential = GoogleAuthProvider.credential(  accessToken: googleAuth.accessToken, idToken: googleAuth.idToken,);
-  //   return await FirebaseAuth.instance.signInWithCredential(credential);
-  // }
+  final FirebaseAuth auth;
+  final FirebaseFirestore firestore;
 
   @override
   Future<Either<Failure, UserCredential>> signIn(
@@ -61,23 +52,20 @@ class FirebaseAuthRepositary implements AuthRepositary {
       required String email,
       required String password}) async {
     try {
-      final userCredentials = await auth.createUserWithEmailAndPassword(
+      final userCredential = await auth.createUserWithEmailAndPassword(
           email: email, password: password);
-      if (userCredentials.user != null) {
-        final userName = await createUserName(firstName);
-        UserData userData = UserData(
-            firstName: firstName,
-            lastName: lastName,
-            userName: userName ?? '',
-            uid: userCredentials.user!.uid,
-            createdTime: DateTime.now(),
-            email: email,
-            bio: '',
-            profileUrl: '');
-
-        await saveUserDataOnFirebase(userData: userData);
-        return Right(userCredentials);
-      }
+      final userName = AppUtils.generateUsername(firstName);
+      UserData userData = UserData(
+          firstName: firstName,
+          lastName: lastName,
+          userName: userName,
+          uid: userCredential.user!.uid,
+          createdTime: DateTime.now(),
+          email: email,
+          bio: '',
+          profileUrl: '');
+      await savedataOnFirebase(userData);
+      return Right(userCredential);
     } on FirebaseAuthException catch (e) {
       if (e.code == 'email-already-in-use') {
         return Left(
@@ -99,19 +87,105 @@ class FirebaseAuthRepositary implements AuthRepositary {
     return Left(Failure(message: "Something went wrong", errorCode: ""));
   }
 
-  Future<void> saveUserDataOnFirebase({required UserData userData}) async {
+  @override
+  Future<Either<Failure, UserCredential>> googleSignIn() async {
+    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+    final GoogleSignInAuthentication? googleAuth =
+        await googleUser?.authentication;
+
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth?.accessToken,
+      idToken: googleAuth?.idToken,
+    );
+
+    return signInWithCredential(credential);
+  }
+
+  @override
+  Future<Either<Failure, UserCredential>> appleSignIn() async {
+    final authProvider = AppleAuthProvider();
+
+    authProvider.addScope("email");
+    authProvider.addScope("name");
+
+    return signInWithProvider(authProvider);
+  }
+
+  /// Creates account & save user data to firebase if user is newly created (signup)
+  Future<Either<Failure, UserCredential>> signInWithCredential(
+      AuthCredential authCredential) async {
+    try {
+      final user = await auth.signInWithCredential(authCredential);
+      await saveNewUserOnFirebase(userCred: user);
+      return Right(user);
+    } on FirebaseAuthException catch (fe) {
+      return Left(Failure(
+          errorCode: fe.code, message: fe.message ?? "Something went wrong"));
+    } catch (e) {
+      return Left(Failure(errorCode: "400", message: "Something went wrong"));
+    }
+  }
+
+  /// Creates account & save user data to firebase if user is newly created (signup)
+  Future<Either<Failure, UserCredential>> signInWithProvider(
+      AuthProvider provider) async {
+    try {
+      final user = await auth.signInWithProvider(provider);
+      if (user.additionalUserInfo!.isNewUser) {
+        await saveNewUserOnFirebase(userCred: user);
+      }
+      return Right(user);
+    } on FirebaseAuthException catch (fe) {
+      if ('user-disabled' == fe.code) {
+        return Left(Failure(message: 'user is disabled.', errorCode: fe.code));
+      }
+    } catch (e) {
+      print(e.toString());
+      return Left(Failure(errorCode: "400", message: e.toString()));
+    }
+    return Left(Failure(errorCode: "400", message: 'Something went wrong'));
+  }
+
+  /// Does nothing if user is not new.
+  Future<void> saveNewUserOnFirebase({required UserCredential userCred}) async {
+    if (userCred.additionalUserInfo?.isNewUser ?? false) {
+      print(auth.currentUser!.displayName);
+      final firstName = AppUtils.extractFirstName(userCred.user!.displayName!);
+      final lastName = AppUtils.extractLastName(userCred.user!.displayName!);
+      final userName = AppUtils.generateUsername(firstName);
+      UserData userData = UserData(
+        firstName: firstName,
+        lastName: lastName,
+        userName: userName,
+        uid: userCred.user!.uid,
+        createdTime: DateTime.now(),
+        email: userCred.user!.email!,
+        bio: '',
+        profileUrl: '',
+      );
+      await firestore
+          .collection('users_data')
+          .doc(userData.uid)
+          .set(userData.toMap());
+      print(userData);
+    }
+  }
+
+  Future<void> savedataOnFirebase(UserData userData) async {
+    final firstName = AppUtils.extractFirstName(userData.firstName);
+    final userName = AppUtils.generateUsername(firstName);
     await firestore
         .collection('users_data')
         .doc(userData.uid)
         .set(userData.toMap());
   }
 
-  Future<String?> createUserName(String firstName) async {
+  Future<String?> generateUsername(String firstName) async {
     String username = AppUtils.generateUsername(firstName);
     if (await isUsernameAvailable(username)) {
       return username;
     }
-    await createUserName(firstName);
+    return await generateUsername(firstName);
   }
 
   Future<bool> isUsernameAvailable(String username) async {
@@ -120,5 +194,36 @@ class FirebaseAuthRepositary implements AuthRepositary {
         .where('user_name', isEqualTo: username)
         .get();
     return query.docs.isEmpty;
+  }
+
+  @override
+  Future<void> signOut() async {
+    await auth.signOut();
+  }
+
+  @override
+  Future<void> saveAppleLoginDetails(AppleLoginDetails appleDetails) async {
+    await firestore
+        .collection('apple_login_details')
+        .doc(appleDetails.token)
+        .set(appleDetails.toMap());
+  }
+
+  Future<AppleLoginDetails?> fetchAppleCredentailFromFirebase(
+      String tokenId) async {
+    final data =
+        await firestore.collection('apple_login_details').doc(tokenId).get();
+    if (data.exists) {
+      try {
+        final appleData = await firestore
+            .collection('apple_login_details')
+            .doc(tokenId)
+            .get();
+        final data = AppleLoginDetails.fromMap(appleData.data()!);
+        return data;
+      } catch (e) {
+        print(e.toString());
+      }
+    }
   }
 }

@@ -1,4 +1,7 @@
-class AppPaths {}
+class AppPaths {
+  static const String blurImage = 'assets/images/blur_image.png';
+
+}
 
 class SvgPaths {
   static const String googleIcon = 'assets/svg/google.svg';

@@ -1,4 +1,4 @@
-import 'package:tiktokclone/feature/home/modals/reel_comment_model.dart';
+import 'package:tiktokclone/feature/comment/modal/reel_comment_model.dart';
 
 class ReelModel {
   final String? id;
