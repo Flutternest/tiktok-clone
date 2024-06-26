@@ -38,6 +38,7 @@ class _ChangeNamePageState extends ConsumerState<ChangeBioPage> {
   @override
   void dispose() {
     bioEditingController.dispose();
+    
     super.dispose();
   }
 
