@@ -7,6 +7,8 @@ import 'package:tiktokclone/core/theme/text_theme.dart';
 import 'package:tiktokclone/core/utility/design_utility.dart';
 import 'package:tiktokclone/feature/global_widgets/common_padding.dart';
 import 'package:tiktokclone/feature/global_widgets/userlisttile.dart';
+import 'package:tiktokclone/feature/home/widgets/reels_page.dart';
+import 'package:tiktokclone/feature/home/widgets/reels_page_one_video.dart';
 import 'package:tiktokclone/feature/post/provider/post_provider.dart';
 import 'package:tiktokclone/feature/search/provider/fetch_users.dart';
 import 'package:tiktokclone/feature/search/provider/search_reel_provider.dart';
@@ -19,6 +21,7 @@ import 'package:tiktokclone/feature/search/sub_views/post_card_view.dart';
 class SearchScreenPage extends ConsumerWidget {
   SearchScreenPage({super.key});
   final TextEditingController serachTextController = TextEditingController();
+  
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final reels = ref.watch(fetchreelsProvider);
@@ -78,13 +81,22 @@ class SearchScreenPage extends ConsumerWidget {
                               return DynamicHeightGridView(
                                   builder: (context, index) {
                                     final reel = reelslist[index];
-                                    return PostCardView(
-                                      description: reel.description,
-                                      thumbnailUrl: reel.thumbNailUrl,
-                                      numberOfLikes:
-                                          "${res.right[index].numberOfLikes}",
-                                      firstName: 'pawan',
-                                      lastName: 'kumar',
+                                    return InkWell(
+                                      onTap: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    ReelsPageOneVideoPage(
+                                                        item: reel)));
+                                      },
+                                      child: PostCardView(
+                                        description: reel.description,
+                                        thumbnailUrl: reel.thumbNailUrl,
+                                        numberOfLikes:
+                                            "${res.right[index].numberOfLikes}",
+                                        createdBy: reel.postedBy,
+                                      ),
                                     );
                                   },
                                   itemCount: res.isRight ? res.right.length : 0,
@@ -105,13 +117,22 @@ class SearchScreenPage extends ConsumerWidget {
                               return DynamicHeightGridView(
                                   builder: (context, index) {
                                     final reel = reelslist[index];
-                                    return PostCardView(
-                                      description: reel.description,
-                                      thumbnailUrl: reel.thumbNailUrl,
-                                      numberOfLikes:
-                                          "${res.right[index].numberOfLikes}",
-                                      firstName: '',
-                                      lastName: '',
+                                    return InkWell(
+                                      onTap: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    ReelsPageOneVideoPage(
+                                                        item: reel)));
+                                      },
+                                      child: PostCardView(
+                                        description: reel.description,
+                                        thumbnailUrl: reel.thumbNailUrl,
+                                        numberOfLikes:
+                                            "${res.right[index].numberOfLikes}",
+                                        createdBy: reel.postedBy,
+                                      ),
                                     );
                                   },
                                   itemCount: res.isRight ? res.right.length : 0,
@@ -136,6 +157,7 @@ class SearchScreenPage extends ConsumerWidget {
                                       userName: user[index].userName,
                                       firstname: user[index].firstName,
                                       lastName: user[index].lastName,
+                                      userProfileImage: user[index].profileUrl,
                                     );
                                   });
                             });
@@ -152,6 +174,7 @@ class SearchScreenPage extends ConsumerWidget {
                                       userName: user[index].userName,
                                       firstname: user[index].firstName,
                                       lastName: user[index].lastName,
+                                      userProfileImage: user[index].profileUrl,
                                     );
                                   });
                             });
@@ -208,13 +231,15 @@ class AppSearchBar extends StatelessWidget {
                 Icons.search,
                 color: Colors.grey,
               )),
-          suffixIcon: InkWell(
-            onTap: onTap,
-            child: const Icon(
-              Icons.cancel,
-              color: Colors.black54,
-            ),
-          ),
+          suffixIcon: controller!.text.isEmpty
+              ? const SizedBox()
+              : InkWell(
+                  onTap: onTap,
+                  child: const Icon(
+                    Icons.cancel,
+                    color: Colors.black54,
+                  ),
+                ),
           filled: true,
           fillColor: Colors.grey.shade200,
           contentPadding:

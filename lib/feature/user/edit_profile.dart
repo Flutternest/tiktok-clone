@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:tiktokclone/core/router/app_router.dart';
 import 'package:tiktokclone/core/theme/text_theme.dart';
 import 'package:tiktokclone/core/utility/app_utility.dart';
@@ -23,7 +24,9 @@ class EditProfilePage extends ConsumerWidget {
       appBar: AppBar(
         centerTitle: true,
         leading: IconButton(
-          onPressed: () {},
+          onPressed: () {
+            context.router.pop();
+          },
           icon: const Icon(
             Icons.arrow_back_ios,
             color: Colors.black,
@@ -50,18 +53,30 @@ class EditProfilePage extends ConsumerWidget {
                       verticalSpaceMoreThanMedium,
                       InkWell(
                         onTap: () async {
-                          // final image = await AppUtils.pickImageFromCamera();
-                          // if (image != null) {
-                          //   final res = await ref
-                          //       .read(userRepositaryProvider)
-                          //       .changeProfilePic(uid, image);
-                          // }
+                          final image = await AppUtils.pickImageFromCamera();
+                          if (image != null) {
+                            final res = await ref
+                                .read(userRepositaryProvider)
+                                .changeProfilePic(uid, image);
+                            ref.invalidate(fetchProfileDataProvider);
+                            res.fold((left) {
+                              Fluttertoast.showToast(msg: left.message);
+                            }, (right) {
+                              Fluttertoast.showToast(
+                                  msg: 'profile pic uploaded successfully');
+                            });
+                          }
                         },
                         child: Container(
                           height: 90,
                           width: 90,
                           decoration: BoxDecoration(
                             color: Colors.grey,
+                            image: user.right.profileUrl.isEmpty
+                                ? null
+                                : DecorationImage(
+                                    fit: BoxFit.fill,
+                                    image: NetworkImage(user.right.profileUrl)),
                             borderRadius: BorderRadius.circular(100),
                           ),
                           child: const Icon(

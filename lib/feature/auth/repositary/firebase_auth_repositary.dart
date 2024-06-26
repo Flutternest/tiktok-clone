@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:either_dart/either.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:tiktokclone/core/utility/app_utility.dart';
@@ -9,12 +10,13 @@ import 'package:tiktokclone/feature/auth/model/apple_login_detail.dart';
 import 'package:tiktokclone/feature/auth/model/user.dart';
 import 'package:tiktokclone/feature/auth/provider/auth_provider.dart';
 import 'package:tiktokclone/feature/auth/repositary/auth_repositary.dart';
+import 'package:tiktokclone/feature/user/user_provider/user_repositary.dart';
 
-class FirebaseAuthRepositary implements AuthRepositary {
-  FirebaseAuthRepositary({required this.auth, required this.firestore});
+class FirebaseAuthRepositary implements AuthRepository {
+  FirebaseAuthRepositary({required this.auth, required this.ref});
 
   final FirebaseAuth auth;
-  final FirebaseFirestore firestore;
+  final Ref ref;
 
   @override
   Future<Either<Failure, UserCredential>> signIn(
@@ -64,7 +66,7 @@ class FirebaseAuthRepositary implements AuthRepositary {
           email: email,
           bio: '',
           profileUrl: '');
-      await savedataOnFirebase(userData);
+      await ref.read(userRepositaryProvider).savedataOnFirebase(userData);
       return Right(userCredential);
     } on FirebaseAuthException catch (e) {
       if (e.code == 'email-already-in-use') {
@@ -116,7 +118,10 @@ class FirebaseAuthRepositary implements AuthRepositary {
       AuthCredential authCredential) async {
     try {
       final user = await auth.signInWithCredential(authCredential);
-      await saveNewUserOnFirebase(userCred: user);
+      await ref
+          .read(userRepositaryProvider)
+          .saveNewUserOnFirebase(userCred: user);
+
       return Right(user);
     } on FirebaseAuthException catch (fe) {
       return Left(Failure(
@@ -132,7 +137,7 @@ class FirebaseAuthRepositary implements AuthRepositary {
     try {
       final user = await auth.signInWithProvider(provider);
       if (user.additionalUserInfo!.isNewUser) {
-        await saveNewUserOnFirebase(userCred: user);
+        ref.read(userRepositaryProvider).saveNewUserOnFirebase(userCred: user);
       }
       return Right(user);
     } on FirebaseAuthException catch (fe) {
@@ -144,40 +149,6 @@ class FirebaseAuthRepositary implements AuthRepositary {
       return Left(Failure(errorCode: "400", message: e.toString()));
     }
     return Left(Failure(errorCode: "400", message: 'Something went wrong'));
-  }
-
-  /// Does nothing if user is not new.
-  Future<void> saveNewUserOnFirebase({required UserCredential userCred}) async {
-    if (userCred.additionalUserInfo?.isNewUser ?? false) {
-      print(auth.currentUser!.displayName);
-      final firstName = AppUtils.extractFirstName(userCred.user!.displayName!);
-      final lastName = AppUtils.extractLastName(userCred.user!.displayName!);
-      final userName = AppUtils.generateUsername(firstName);
-      UserData userData = UserData(
-        firstName: firstName,
-        lastName: lastName,
-        userName: userName,
-        uid: userCred.user!.uid,
-        createdTime: DateTime.now(),
-        email: userCred.user!.email!,
-        bio: '',
-        profileUrl: '',
-      );
-      await firestore
-          .collection('users_data')
-          .doc(userData.uid)
-          .set(userData.toMap());
-      print(userData);
-    }
-  }
-
-  Future<void> savedataOnFirebase(UserData userData) async {
-    final firstName = AppUtils.extractFirstName(userData.firstName);
-    final userName = AppUtils.generateUsername(firstName);
-    await firestore
-        .collection('users_data')
-        .doc(userData.uid)
-        .set(userData.toMap());
   }
 
   Future<String?> generateUsername(String firstName) async {
@@ -199,31 +170,5 @@ class FirebaseAuthRepositary implements AuthRepositary {
   @override
   Future<void> signOut() async {
     await auth.signOut();
-  }
-
-  @override
-  Future<void> saveAppleLoginDetails(AppleLoginDetails appleDetails) async {
-    await firestore
-        .collection('apple_login_details')
-        .doc(appleDetails.token)
-        .set(appleDetails.toMap());
-  }
-
-  Future<AppleLoginDetails?> fetchAppleCredentailFromFirebase(
-      String tokenId) async {
-    final data =
-        await firestore.collection('apple_login_details').doc(tokenId).get();
-    if (data.exists) {
-      try {
-        final appleData = await firestore
-            .collection('apple_login_details')
-            .doc(tokenId)
-            .get();
-        final data = AppleLoginDetails.fromMap(appleData.data()!);
-        return data;
-      } catch (e) {
-        print(e.toString());
-      }
-    }
   }
 }

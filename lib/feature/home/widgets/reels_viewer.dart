@@ -86,10 +86,7 @@ class _ReelsViewerState extends State<ReelsViewer> {
                   onLike: widget.onLike,
                   onShare: widget.onShare,
                   showVerifiedTick: widget.showVerifiedTick,
-                  swiperController: controller,
                   showProgressIndicator: widget.showProgressIndicator,
-                  createdBy: widget.reelsList[index].postedBy,
-                  thumbNailUrl: widget.reelsList[index].thumbNailUrl,
                 );
               },
               controller: controller,

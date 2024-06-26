@@ -29,7 +29,6 @@ class _SignUpState extends ConsumerState<SignUpPage> {
   bool passwordVisibility = false;
   @override
   void dispose() {
-    // TODO: implement dispose
     emailController.dispose();
     passwordController.dispose();
     firstNameController.dispose();
@@ -147,23 +146,23 @@ class _SignUpState extends ConsumerState<SignUpPage> {
                           isLoading = true;
                         });
                         final user = await ref
-                            .read(authRepositaryProvider)
+                            .read(authRepositoryProvider)
                             .signUp(
                                 firstName: firstNameController.text.trim(),
                                 lastName: lastNameController.text.trim(),
                                 email: emailController.text.trim(),
                                 password: passwordController.text.trim());
-                        if (user.isRight) {
+                        user.fold((error) {
+                          Fluttertoast.showToast(msg: error.message);
+                          setState(() {
+                            isLoading = false;
+                          });
+                        }, (right) {
                           setState(() {
                             isLoading = false;
                           });
                           context.router.push(const BaseRoute());
-                        } else if (user.isLeft) {
-                          Fluttertoast.showToast(msg: user.left.message);
-                          setState(() {
-                            isLoading = false;
-                          });
-                        }
+                        });
                       }
                     },
                     child: isLoading

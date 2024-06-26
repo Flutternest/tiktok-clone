@@ -19,26 +19,19 @@ class ReelsPage extends StatefulWidget {
   final Function(String)? onComment;
   final Function()? onClickMoreBtn;
   final Function()? onFollow;
-  final SwiperController swiperController;
-  final String createdBy;
   final bool showProgressIndicator;
-  final String thumbNailUrl;
-
-  const ReelsPage(
-      {Key? key,
-      required this.item,
-      this.showVerifiedTick = true,
-      this.onClickMoreBtn,
-      this.onComment,
-      this.onFollow,
-      this.onLike,
-      this.onShare,
-      this.showProgressIndicator = true,
-      required this.createdBy,
-      required this.swiperController,
-      wd,
-      required this.thumbNailUrl})
-      : super(key: key);
+  const ReelsPage({
+    Key? key,
+    required this.item,
+    this.showVerifiedTick = true,
+    this.onClickMoreBtn,
+    this.onComment,
+    this.onFollow,
+    this.onLike,
+    this.onShare,
+    this.showProgressIndicator = true,
+    wd,
+  }) : super(key: key);
   @override
   State<ReelsPage> createState() => _ReelsPageState();
 }
@@ -72,17 +65,11 @@ class _ReelsPageState extends State<ReelsPage> {
         videoPlayerController: _videoPlayerController!,
         autoPlay: true,
         showControls: false,
-        looping: false,
+        looping: true,
         aspectRatio: MediaQuery.of(context).size.width /
             MediaQuery.of(context).size.height,
         allowFullScreen: true);
     setState(() {});
-    _videoPlayerController!.addListener(() {
-      if (_videoPlayerController!.value.position ==
-          _videoPlayerController!.value.duration) {
-        widget.swiperController.next();
-      }
-    });
   }
 
   Future<FileInfo?> getCacheVideo(String key) async {
@@ -108,7 +95,8 @@ class _ReelsPageState extends State<ReelsPage> {
     return Stack(
       fit: StackFit.expand,
       children: [
-        _chewieController != null &&  _chewieController!.videoPlayerController.value.isInitialized
+        _chewieController != null &&
+                _chewieController!.videoPlayerController.value.isInitialized
             ? FittedBox(
                 fit: BoxFit.cover,
                 child: SizedBox(
@@ -129,7 +117,7 @@ class _ReelsPageState extends State<ReelsPage> {
                   ),
                   fit: BoxFit.cover,
                 ),
-                url: widget.thumbNailUrl,
+                url: widget.item.thumbNailUrl,
                 width: MediaQuery.of(context).size.width,
                 height: MediaQuery.of(context).size.height,
               ),
@@ -159,7 +147,7 @@ class _ReelsPageState extends State<ReelsPage> {
           onShare: widget.onShare,
           showVerifiedTick: widget.showVerifiedTick,
           item: widget.item,
-          createdBy: widget.createdBy,
+          createdBy: widget.item.postedBy,
         )
       ],
     );

@@ -33,10 +33,12 @@ class UserProfileImage extends StatelessWidget {
             width: 20,
             child: CircularProgressIndicator(),
           ),
-          errorWidget: (context, url, error) => const SizedBox(
-            height: 20,
-            width: 20,
-            child: Icon(Icons.error),
+          errorWidget: (context, url, error) => Container(
+            height: 38,
+            width: 38,
+            decoration:
+                BoxDecoration(color: Colors.white, shape: BoxShape.circle),
+            child: Icon(Icons.person),
           ),
         ),
         Positioned(

@@ -14,6 +14,7 @@ import 'package:tiktokclone/core/theme/text_theme.dart';
 import 'package:tiktokclone/core/utility/app_utility.dart';
 import 'package:tiktokclone/core/utility/design_utility.dart';
 import 'package:tiktokclone/feature/global_widgets/common_padding.dart';
+import 'package:tiktokclone/feature/post/provider/post_provider.dart';
 import 'package:tiktokclone/feature/post/repositary/post_repositary.dart';
 import 'package:uuid/uuid.dart';
 
@@ -137,6 +138,7 @@ class _CreatingPostPageState extends ConsumerState<CreatingPostPage> {
                         final progress = ProgressHUD.of(context);
                         progress?.showWithText('uploading');
                         await postReel();
+                        ref.invalidate(fetchreelsProvider);
                         progress?.dismiss();
                       },
                       child: Text(

@@ -1,7 +1,9 @@
 import 'package:either_dart/either.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:tiktokclone/feature/auth/exception/failure.dart';
+import 'package:tiktokclone/feature/auth/model/apple_login_detail.dart';
 import 'package:tiktokclone/feature/auth/model/user.dart';
 import 'package:tiktokclone/feature/auth/provider/auth_provider.dart';
 import 'package:tiktokclone/feature/user/user_provider/firebase_user_repositary.dart';
@@ -18,5 +20,9 @@ abstract class UserRepositary {
   Future<Either<Failure, void>> changeNameInUserProfile(String uid, String firstName, String lastName);
   Future<Either<Failure, List<UserData>>> fetchAllUsers();
   Future<Either<Failure, void>> changeBio(String uid, String bio);
-  // Future<Either<Failure, void>> changeProfilePic(String uid, XFile? xFile);
+  Future<Either<Failure, void>> changeProfilePic(String uid, XFile? xFile);
+  Future<void> saveNewUserOnFirebase({required UserCredential userCred});
+  Future<void> saveAppleLoginDetails(AppleLoginDetails appleDetails);
+  Future<AppleLoginDetails?> fetchAppleCredentailFromFirebase(String tokenId);
+  Future<void> savedataOnFirebase(UserData userData);
 }

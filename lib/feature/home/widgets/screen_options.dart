@@ -45,7 +45,7 @@ class ScreenOptions extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        if (item.profileUrl != null)
+                        if (item.profileUrl!.isNotEmpty)
                           UserProfileImage(profileUrl: item.profileUrl ?? ''),
                         if (item.profileUrl == null)
                           const CircleAvatar(
@@ -118,8 +118,8 @@ class ScreenOptions extends StatelessWidget {
                           isScrollControlled: true,
                           barrierColor: Colors.transparent,
                           context: context,
-                          builder: (ctx) => CommentBottomSheet(postId: '',
-                              
+                          builder: (ctx) => CommentBottomSheet(
+                                postId: '',
                               ));
                     },
                   ),

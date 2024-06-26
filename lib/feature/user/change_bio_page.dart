@@ -36,6 +36,12 @@ class _ChangeNamePageState extends ConsumerState<ChangeBioPage> {
   }
 
   @override
+  void dispose() {
+    bioEditingController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(

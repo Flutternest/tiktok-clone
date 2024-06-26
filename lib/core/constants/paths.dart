@@ -1,6 +1,6 @@
 class AppPaths {
   static const String blurImage = 'assets/images/blur_image.png';
-
+  static const String humanImage = 'assets/images/human.png';
 }
 
 class SvgPaths {

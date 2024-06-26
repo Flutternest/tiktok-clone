@@ -41,8 +41,7 @@ class AppUtils {
     final sizeOfFile = await _getFileSize(path);
     print(sizeOfFile);
     final outputPath = "${tempDir.path}/${postId}.mp4";
-    final String command =
-        '-y -i $path  -c:v libx264 -b:a 44100 -crf 30 -ar 22050 -tune fastdecode -preset ultrafast $outputPath';
+    final String command ='-y -i $path  -c:v libx264 -b:a 44100 -crf 30 -ar 22050 -tune fastdecode -preset ultrafast $outputPath';
     await FFmpegKit.execute(command);
     return File(outputPath);
   }
@@ -121,11 +120,11 @@ class AppUtils {
     return image;
   }
 
-  // static Future<XFile?> pickImageFromCamera() async {
-  //   final ImagePicker picker = ImagePicker();
-  //   XFile? image = await picker.pickImage(source: ImageSource.camera);
-  //   return image;
-  // }
+  static Future<XFile?> pickImageFromCamera() async {
+    final ImagePicker picker = ImagePicker();
+    XFile? image = await picker.pickImage(source: ImageSource.camera);
+    return image;
+  }
 
   static Future<Uint8List?> getImageFromVideo(XFile? videofile) async {
     final image = await VideoThumbnail.thumbnailData(

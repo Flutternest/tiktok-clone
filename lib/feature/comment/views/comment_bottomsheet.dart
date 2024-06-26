@@ -20,6 +20,12 @@ class _CommentBottomSheetState extends ConsumerState<CommentBottomSheet> {
   final commentController = TextEditingController(text: '');
   final Uuid uuid = Uuid();
   @override
+  void dispose() {
+    commentController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final comments = ref.watch(fetchCommentsProvider(widget.postId));
     return comments.when(

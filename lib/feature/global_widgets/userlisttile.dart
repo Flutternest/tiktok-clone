@@ -1,13 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:tiktokclone/core/constants/constants.dart';
+import 'package:tiktokclone/core/constants/paths.dart';
 import 'package:tiktokclone/core/theme/text_theme.dart';
 import 'package:tiktokclone/core/utility/design_utility.dart';
 
 class UserListTile extends StatelessWidget {
-  const UserListTile({super.key, required this.userName, required this.firstname, required this.lastName});
+  const UserListTile(
+      {super.key,
+      required this.userName,
+      required this.firstname,
+      required this.lastName,
+      required this.userProfileImage});
   final String userName;
   final String firstname;
   final String lastName;
+  final String userProfileImage;
 
   @override
   Widget build(BuildContext context) {
@@ -19,14 +26,23 @@ class UserListTile extends StatelessWidget {
           children: [
             InkWell(
               onTap: () {},
-              child: const SizedBox(
-                height: 42,
-                width: 42,
-                child: CircleAvatar(
-                  backgroundColor: Colors.white,
-                  backgroundImage: NetworkImage(AppString.testingUrl),
-                ),
-              ),
+              child: userProfileImage.isEmpty
+                  ? const SizedBox(
+                      height: 42,
+                      width: 42,
+                      child: CircleAvatar(
+                        backgroundColor: Colors.white,
+                        backgroundImage: AssetImage(AppPaths.humanImage),
+                      ),
+                    )
+                  : SizedBox(
+                      height: 42,
+                      width: 42,
+                      child: CircleAvatar(
+                        backgroundColor: Colors.white,
+                        backgroundImage: NetworkImage(userProfileImage),
+                      ),
+                    ),
             ),
             horizontalSpaceSmall,
             Column(

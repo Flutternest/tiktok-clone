@@ -23,8 +23,35 @@ class _LoginEmailState extends ConsumerState<SignInPage> {
   final TextEditingController passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   bool isLoading = false;
+  Future<void> performLogin() async {
+    if (_formKey.currentState!.validate()) {
+      setState(() {
+        isLoading = true;
+      });
+      final user = await ref.read(authRepositoryProvider).signIn(
+          email: emailController.text.trim(),
+          password: passwordController.text.trim());
+      user.fold((error) {
+        setState(() {
+          isLoading = false;
+        });
+        Fluttertoast.showToast(msg: error.message);
+      }, (right) {
+        setState(() {
+          isLoading = false;
+        });
+        context.router.push(const BaseRoute());
+      });
+    }
+  }
 
   bool passwordVisibility = false;
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -107,29 +134,7 @@ class _LoginEmailState extends ConsumerState<SignInPage> {
               ),
               verticalSpaceSmall,
               ElevatedButton(
-                  onPressed: () async {
-                    if (_formKey.currentState!.validate()) {
-                      setState(() {
-                        isLoading = true;
-                      });
-                      final user = await ref
-                          .read(authRepositaryProvider)
-                          .signIn(
-                              email: emailController.text.trim(),
-                              password: passwordController.text.trim());
-                      if (user.isLeft) {
-                        setState(() {
-                          isLoading = false;
-                        });
-                        Fluttertoast.showToast(msg: user.left.message);
-                      } else if (user.isRight) {
-                        setState(() {
-                          isLoading = false;
-                        });
-                        context.router.push(BaseRoute());
-                      }
-                    }
-                  },
+                  onPressed: performLogin,
                   child: isLoading
                       ? const SizedBox(
                           height: 20,

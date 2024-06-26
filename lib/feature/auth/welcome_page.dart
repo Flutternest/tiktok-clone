@@ -18,7 +18,6 @@ import 'package:tiktokclone/feature/home/base_page.dart';
 class WelcomePage extends ConsumerStatefulWidget {
   const WelcomePage({super.key});
 
-
   ConsumerState<WelcomePage> createState() => _LoginPageState();
 }
 
@@ -26,7 +25,7 @@ class _LoginPageState extends ConsumerState<WelcomePage>
     with FullPageProgressMixin {
   Future<void> continueWithApple(BuildContext context) async {
     showLoader(context, () async {
-      final result = await ref.read(authRepositaryProvider).appleSignIn();
+      final result = await ref.read(authRepositoryProvider).appleSignIn();
       result.fold((left) {
         Fluttertoast.showToast(msg: left.message);
       }, (right) {
@@ -37,8 +36,7 @@ class _LoginPageState extends ConsumerState<WelcomePage>
 
   Future<void> continueWithGoogle(BuildContext context) async {
     showLoader(context, () async {
-      final result = await ref.read(authRepositaryProvider).googleSignIn();
-
+      final result = await ref.read(authRepositoryProvider).googleSignIn();
       result.fold((left) {
         Fluttertoast.showToast(msg: left.message);
       }, (right) {
@@ -134,11 +132,13 @@ class _LoginPageState extends ConsumerState<WelcomePage>
         Text.rich(TextSpan(children: [
           TextSpan(
             text: 'By continuing you agree to our ',
-            style: appTheme.headlineMedium?.copyWith(color: Colors.grey.shade500, fontSize: 15),
+            style: appTheme.headlineMedium
+                ?.copyWith(color: Colors.grey.shade500, fontSize: 15),
           ),
           TextSpan(
               text: 'Terms of service ',
-              style: appTheme.headlineSmall?.copyWith(fontSize: 16, fontWeight: FontWeight.w600)),
+              style: appTheme.headlineSmall
+                  ?.copyWith(fontSize: 16, fontWeight: FontWeight.w600)),
           TextSpan(
             text: 'and acknowledge het you have read our ',
             style: appTheme.headlineMedium

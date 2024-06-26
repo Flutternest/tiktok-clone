@@ -42,6 +42,13 @@ class _ChangeNamePageState extends ConsumerState<ChangeNamePage> {
   }
 
   @override
+  void dispose() {
+    firstNameTextEditingController.dispose();
+    lastNameTextEditingController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
