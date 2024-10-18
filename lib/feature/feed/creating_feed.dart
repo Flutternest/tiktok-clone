@@ -1,9 +1,6 @@
 import 'dart:io';
 import 'dart:math';
-import 'dart:typed_data';
-
 import 'package:auto_route/auto_route.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_progress_hud/flutter_progress_hud.dart';
@@ -14,8 +11,8 @@ import 'package:tiktokclone/core/theme/text_theme.dart';
 import 'package:tiktokclone/core/utility/app_utility.dart';
 import 'package:tiktokclone/core/utility/design_utility.dart';
 import 'package:tiktokclone/feature/global_widgets/common_padding.dart';
-import 'package:tiktokclone/feature/post/provider/post_provider.dart';
-import 'package:tiktokclone/feature/post/repositary/post_repositary.dart';
+import 'package:tiktokclone/feature/feed/provider/feed_provider.dart';
+import 'package:tiktokclone/feature/feed/repositary/feed_repositary.dart';
 import 'package:uuid/uuid.dart';
 
 @RoutePage()
@@ -28,30 +25,13 @@ class CreatingPostPage extends ConsumerStatefulWidget {
 }
 
 class _CreatingPostPageState extends ConsumerState<CreatingPostPage> {
-  final TextEditingController descriptionEditingController =
-      TextEditingController();
+  final TextEditingController descriptionEditingController = TextEditingController();
   final Uuid uuid = Uuid();
-  getFileSize(String filepath, int decimals) async {
-    var file = File(filepath);
-    int bytes = await file.length();
-    if (bytes <= 0) return "0 B";
-    const suffixes = ["B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
-    var i = (log(bytes) / log(1024)).floor();
-    return ((bytes / pow(1024, i)).toStringAsFixed(decimals)) +
-        ' ' +
-        suffixes[i];
-  }
-
-  Future<void> postReel() async {
-    print(getFileSize(widget.xfile.path, 1));
+  Future<void> postTikTokVideo() async {
     final postid = uuid.v4().toString();
     final file = await AppUtils.compress(widget.xfile.path, postid);
-    final response = await ref
-        .read(postRepositaryProvider)
-        .addPost(file!.path, descriptionEditingController.text.trim(), postid);
-    response.fold((left) {
-      Fluttertoast.showToast(msg: left.message);
-      print(left.message);
+    final response = await ref.read(tikTokRepositaryProvider).addTikTokVideo(file!.path, descriptionEditingController.text.trim(), postid);
+    response.fold((left) {Fluttertoast.showToast(msg: left.message);
     }, (right) {
       Fluttertoast.showToast(msg: 'Video uploaded successfully');
       context.router.pop();
@@ -137,8 +117,8 @@ class _CreatingPostPageState extends ConsumerState<CreatingPostPage> {
                       onPressed: () async {
                         final progress = ProgressHUD.of(context);
                         progress?.showWithText('uploading');
-                        await postReel();
-                        ref.invalidate(fetchreelsProvider);
+                        await postTikTokVideo();
+                        ref.invalidate(tikTokVideosProvider);
                         progress?.dismiss();
                       },
                       child: Text(

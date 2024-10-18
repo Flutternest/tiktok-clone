@@ -4,8 +4,8 @@ import 'package:shimmer/shimmer.dart';
 import 'package:tiktokclone/core/utility/design_utility.dart';
 import 'package:tiktokclone/feature/global_widgets/common_padding.dart';
 
-class PostShimmer extends StatelessWidget {
-  const PostShimmer({super.key});
+class FeedShimmer extends StatelessWidget {
+  const FeedShimmer({super.key});
 
   @override
   Widget build(BuildContext context) {

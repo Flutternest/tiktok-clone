@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:tiktokclone/core/constants/constants.dart';
 import 'package:tiktokclone/core/constants/paths.dart';
 import 'package:tiktokclone/core/theme/text_theme.dart';
 import 'package:tiktokclone/core/utility/design_utility.dart';

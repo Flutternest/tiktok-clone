@@ -6,7 +6,7 @@ import 'package:tiktokclone/feature/auth/provider/auth_provider.dart';
 import 'package:tiktokclone/feature/auth/repositary/firebase_auth_repositary.dart';
 
 final authRepositoryProvider = Provider<AuthRepository>((ref) {
-  return FirebaseAuthRepositary(
+  return FirebaseAuthRepository(
       auth: ref.watch(firebaseAuthProvider), ref: ref);
 });
 
@@ -16,9 +16,9 @@ abstract class AuthRepository {
       required String lastName,
       required String email,
       required String password});
-  Future<Either<Failure, UserCredential>> signIn({required String email, required String password});
+  Future<Either<Failure, UserCredential>> signIn(
+      {required String email, required String password});
   Future<Either<Failure, UserCredential>> googleSignIn();
   Future<Either<Failure, UserCredential>> appleSignIn();
-
   Future<void> signOut();
 }

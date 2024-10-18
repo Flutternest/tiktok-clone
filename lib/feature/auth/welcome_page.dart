@@ -23,6 +23,7 @@ class WelcomePage extends ConsumerStatefulWidget {
 
 class _LoginPageState extends ConsumerState<WelcomePage>
     with FullPageProgressMixin {
+  // apple login
   Future<void> continueWithApple(BuildContext context) async {
     showLoader(context, () async {
       final result = await ref.read(authRepositoryProvider).appleSignIn();
@@ -34,6 +35,7 @@ class _LoginPageState extends ConsumerState<WelcomePage>
     });
   }
 
+// google login
   Future<void> continueWithGoogle(BuildContext context) async {
     showLoader(context, () async {
       final result = await ref.read(authRepositoryProvider).googleSignIn();

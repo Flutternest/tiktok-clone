@@ -8,11 +8,11 @@ import 'package:tiktokclone/core/constants/paths.dart';
 import 'package:tiktokclone/feature/home/components/like_icon.dart';
 import 'package:tiktokclone/feature/home/components/screen_options.dart';
 
-import 'package:tiktokclone/feature/post/modal/post.dart';
+import 'package:tiktokclone/feature/feed/modal/feed.dart';
 import 'package:video_player/video_player.dart';
 
-class ReelsPage extends StatefulWidget {
-  final Post item;
+class TikTokVideosPage extends StatefulWidget {
+  final Feed item;
   final bool showVerifiedTick;
   final Function(String)? onShare;
   final Function(String)? onLike;
@@ -20,7 +20,7 @@ class ReelsPage extends StatefulWidget {
   final Function()? onClickMoreBtn;
   final Function()? onFollow;
   final bool showProgressIndicator;
-  const ReelsPage({
+  const TikTokVideosPage({
     Key? key,
     required this.item,
     this.showVerifiedTick = true,
@@ -33,10 +33,10 @@ class ReelsPage extends StatefulWidget {
     wd,
   }) : super(key: key);
   @override
-  State<ReelsPage> createState() => _ReelsPageState();
+  State<TikTokVideosPage> createState() => _TikTokVideosPageState();
 }
 
-class _ReelsPageState extends State<ReelsPage> {
+class _TikTokVideosPageState extends State<TikTokVideosPage> {
   VideoPlayerController? _videoPlayerController;
   ChewieController? _chewieController;
   bool _liked = false;
@@ -47,19 +47,10 @@ class _ReelsPageState extends State<ReelsPage> {
   }
 
   bool isLaoding = false;
-  Future initializePlayer() async {
-    final checkFileExistInCache =
-        await DefaultCacheManager().getFileFromCache(widget.item.videoUrl);
-    if (checkFileExistInCache == null) {
-      final file3 = DefaultCacheManager().getSingleFile(widget.item.videoUrl);
-      _videoPlayerController =
-          VideoPlayerController.networkUrl(Uri.parse(widget.item.videoUrl));
-    } else {
-      final file3 =
-          await DefaultCacheManager().getSingleFile(widget.item.videoUrl);
-      _videoPlayerController = VideoPlayerController.file(file3);
-    }
 
+  // initialize player
+  Future initializePlayer() async {
+    await inializeVideoPlayerController();
     await Future.wait([_videoPlayerController!.initialize()]);
     _chewieController = ChewieController(
         videoPlayerController: _videoPlayerController!,
@@ -72,6 +63,24 @@ class _ReelsPageState extends State<ReelsPage> {
     setState(() {});
   }
 
+  Future<void> inializeVideoPlayerController() async {
+    // check file if exist than video come from cache manager.
+    final checkFileExistInCache =
+        await DefaultCacheManager().getFileFromCache(widget.item.videoUrl);
+    if (checkFileExistInCache == null) {
+      // if video don't exist in cache manager, than play form internet.
+      final file3 = DefaultCacheManager().getSingleFile(widget.item.videoUrl);
+      _videoPlayerController =
+          VideoPlayerController.networkUrl(Uri.parse(widget.item.videoUrl));
+    } else {
+      // play video from caache manager if video exist in cache manager.
+      final file3 =
+          await DefaultCacheManager().getSingleFile(widget.item.videoUrl);
+      _videoPlayerController = VideoPlayerController.file(file3);
+    }
+  }
+
+// getting the cache video from cache manager
   Future<FileInfo?> getCacheVideo(String key) async {
     final file3 = await DefaultCacheManager().getFileFromCache(key);
     return file3;
@@ -98,6 +107,7 @@ class _ReelsPageState extends State<ReelsPage> {
         _chewieController != null &&
                 _chewieController!.videoPlayerController.value.isInitialized
             ? FittedBox(
+                clipBehavior: Clip.antiAlias,
                 fit: BoxFit.cover,
                 child: SizedBox(
                   width: MediaQuery.of(context).size.width,

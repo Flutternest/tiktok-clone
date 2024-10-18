@@ -4,7 +4,7 @@ import 'package:tiktokclone/core/constants/constants.dart';
 import 'package:tiktokclone/core/constants/paths.dart';
 import 'package:tiktokclone/core/theme/text_theme.dart';
 import 'package:tiktokclone/core/utility/design_utility.dart';
-import 'package:tiktokclone/feature/post/shimmer/post_shimmer.dart';
+import 'package:tiktokclone/feature/feed/shimmer/feed_shimmer.dart';
 import 'package:tiktokclone/feature/search/provider/fetch_users.dart';
 import 'package:tiktokclone/feature/user/provider/user_provider.dart';
 
@@ -121,7 +121,7 @@ class _PostCardViewState extends ConsumerState<PostCardView> {
         return Text(error.toString());
       },
       loading: () {
-        return PostShimmer();
+        return FeedShimmer();
       },
     );
   }

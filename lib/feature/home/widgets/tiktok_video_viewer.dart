@@ -2,11 +2,11 @@ import 'package:card_swiper/card_swiper.dart';
 import 'package:flutter/material.dart';
 import 'package:tiktokclone/feature/home/modals/reel_model.dart';
 import 'package:tiktokclone/feature/home/widgets/reels_page.dart';
-import 'package:tiktokclone/feature/post/modal/post.dart';
+import 'package:tiktokclone/feature/feed/modal/feed.dart';
 
-class ReelsViewer extends StatefulWidget {
+class TikTokVideosViewer extends StatefulWidget {
   /// use reel model and provide list of reels, list contains reels object, object contains url and other parameters
-  final List<Post> reelsList;
+  final List<Feed> reelsList;
 
   /// use to show/hide verified tick, by default true
   final bool showVerifiedTick;
@@ -41,7 +41,7 @@ class ReelsViewer extends StatefulWidget {
   /// function invoke when user click on back btn
   final Function()? onClickBackArrow;
 
-  const ReelsViewer({
+  const TikTokVideosViewer({
     Key? key,
     required this.reelsList,
     this.showVerifiedTick = true,
@@ -58,10 +58,10 @@ class ReelsViewer extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<ReelsViewer> createState() => _ReelsViewerState();
+  State<TikTokVideosViewer> createState() => _TikTokVideosViewerState();
 }
 
-class _ReelsViewerState extends State<ReelsViewer> {
+class _TikTokVideosViewerState extends State<TikTokVideosViewer> {
   SwiperController controller = SwiperController();
 
   @override
@@ -73,28 +73,25 @@ class _ReelsViewerState extends State<ReelsViewer> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.black,
       body: SafeArea(
-        child: Stack(
-          children: [
-            Swiper(
-              itemBuilder: (BuildContext context, int index) {
-                return ReelsPage(
-                  item: widget.reelsList[index],
-                  onClickMoreBtn: widget.onClickMoreBtn,
-                  onComment: widget.onComment,
-                  onFollow: widget.onFollow,
-                  onLike: widget.onLike,
-                  onShare: widget.onShare,
-                  showVerifiedTick: widget.showVerifiedTick,
-                  showProgressIndicator: widget.showProgressIndicator,
-                );
-              },
-              controller: controller,
-              itemCount: widget.reelsList.length,
-              scrollDirection: Axis.vertical,
-              onIndexChanged: widget.onIndexChanged,
-            ),
-          ],
+        child: Swiper(
+          itemBuilder: (BuildContext context, int index) {
+            return TikTokVideosPage(
+              item: widget.reelsList[index],
+              onClickMoreBtn: widget.onClickMoreBtn,
+              onComment: widget.onComment,
+              onFollow: widget.onFollow,
+              onLike: widget.onLike,
+              onShare: widget.onShare,
+              showVerifiedTick: widget.showVerifiedTick,
+              showProgressIndicator: widget.showProgressIndicator,
+            );
+          },
+          controller: controller,
+          itemCount: widget.reelsList.length,
+          scrollDirection: Axis.vertical,
+          onIndexChanged: widget.onIndexChanged,
         ),
       ),
     );

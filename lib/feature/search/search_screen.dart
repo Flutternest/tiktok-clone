@@ -2,14 +2,12 @@ import 'package:auto_route/auto_route.dart';
 import 'package:dynamic_height_grid_view/dynamic_height_grid_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:tiktokclone/core/constants/constants.dart';
 import 'package:tiktokclone/core/theme/text_theme.dart';
 import 'package:tiktokclone/core/utility/design_utility.dart';
 import 'package:tiktokclone/feature/global_widgets/common_padding.dart';
 import 'package:tiktokclone/feature/global_widgets/userlisttile.dart';
-import 'package:tiktokclone/feature/home/widgets/reels_page.dart';
 import 'package:tiktokclone/feature/home/widgets/reels_page_one_video.dart';
-import 'package:tiktokclone/feature/post/provider/post_provider.dart';
+import 'package:tiktokclone/feature/feed/provider/feed_provider.dart';
 import 'package:tiktokclone/feature/search/provider/fetch_users.dart';
 import 'package:tiktokclone/feature/search/provider/search_reel_provider.dart';
 import 'package:tiktokclone/feature/search/provider/search_user_provider.dart';
@@ -21,10 +19,10 @@ import 'package:tiktokclone/feature/search/sub_views/post_card_view.dart';
 class SearchScreenPage extends ConsumerWidget {
   SearchScreenPage({super.key});
   final TextEditingController serachTextController = TextEditingController();
-  
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final reels = ref.watch(fetchreelsProvider);
+    final reels = ref.watch(tikTokVideosProvider);
     final searchReels =
         ref.watch(searchReelProvider(serachTextController.text));
     final users = ref.watch(fetchUsersProvider);
@@ -76,32 +74,29 @@ class SearchScreenPage extends ConsumerWidget {
                   serachTextController.text.isEmpty
                       ? reels.when(
                           data: (res) {
-                            return res.fold((left) => const Text(''),
-                                (reelslist) {
-                              return DynamicHeightGridView(
-                                  builder: (context, index) {
-                                    final reel = reelslist[index];
-                                    return InkWell(
-                                      onTap: () {
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    ReelsPageOneVideoPage(
-                                                        item: reel)));
-                                      },
-                                      child: PostCardView(
-                                        description: reel.description,
-                                        thumbnailUrl: reel.thumbNailUrl,
-                                        numberOfLikes:
-                                            "${res.right[index].numberOfLikes}",
-                                        createdBy: reel.postedBy,
-                                      ),
-                                    );
-                                  },
-                                  itemCount: res.isRight ? res.right.length : 0,
-                                  crossAxisCount: 2);
-                            });
+                            return DynamicHeightGridView(
+                                builder: (context, index) {
+                                  final reel = res[index];
+                                  return InkWell(
+                                    onTap: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  ReelsPageOneVideoPage(
+                                                      item: reel)));
+                                    },
+                                    child: PostCardView(
+                                      description: reel.description,
+                                      thumbnailUrl: reel.thumbNailUrl,
+                                      numberOfLikes:
+                                          "${res[index].numberOfLikes}",
+                                      createdBy: reel.postedBy,
+                                    ),
+                                  );
+                                },
+                                itemCount: res.length,
+                                crossAxisCount: 2);
                           },
                           error: (Object error, StackTrace stackTrace) {
                             return Text(error.toString());

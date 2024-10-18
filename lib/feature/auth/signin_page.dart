@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:tiktokclone/core/provider/is_loading_provider.dart';
 import 'package:tiktokclone/core/router/app_router.dart';
 import 'package:tiktokclone/core/utility/app_utility.dart';
 import 'package:tiktokclone/core/utility/design_utility.dart';
@@ -22,24 +23,18 @@ class _LoginEmailState extends ConsumerState<SignInPage> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  bool isLoading = false;
+  // login
   Future<void> performLogin() async {
     if (_formKey.currentState!.validate()) {
-      setState(() {
-        isLoading = true;
-      });
+      ref.read(isLoadingProvider.notifier).state = true;
       final user = await ref.read(authRepositoryProvider).signIn(
           email: emailController.text.trim(),
           password: passwordController.text.trim());
       user.fold((error) {
-        setState(() {
-          isLoading = false;
-        });
+        ref.read(isLoadingProvider.notifier).state = false;
         Fluttertoast.showToast(msg: error.message);
       }, (right) {
-        setState(() {
-          isLoading = false;
-        });
+        ref.read(isLoadingProvider.notifier).state = false;
         context.router.push(const BaseRoute());
       });
     }
@@ -55,6 +50,7 @@ class _LoginEmailState extends ConsumerState<SignInPage> {
 
   @override
   Widget build(BuildContext context) {
+    final isLoading = ref.watch(isLoadingProvider);
     return SafeArea(
         child: Scaffold(
       appBar: AppBar(

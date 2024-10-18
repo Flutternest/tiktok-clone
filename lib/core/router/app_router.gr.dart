@@ -104,16 +104,6 @@ abstract class _$AppRouter extends RootStackRouter {
         child: SignUpPage(key: args.key),
       );
     },
-    VideoEditorRoute.name: (routeData) {
-      final args = routeData.argsAs<VideoEditorRouteArgs>();
-      return AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: VideoEditorPage(
-          key: args.key,
-          file: args.file,
-        ),
-      );
-    },
     WelcomeRoute.name: (routeData) {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
@@ -438,44 +428,6 @@ class SignUpRouteArgs {
   @override
   String toString() {
     return 'SignUpRouteArgs{key: $key}';
-  }
-}
-
-/// generated route for
-/// [VideoEditorPage]
-class VideoEditorRoute extends PageRouteInfo<VideoEditorRouteArgs> {
-  VideoEditorRoute({
-    Key? key,
-    required File file,
-    List<PageRouteInfo>? children,
-  }) : super(
-          VideoEditorRoute.name,
-          args: VideoEditorRouteArgs(
-            key: key,
-            file: file,
-          ),
-          initialChildren: children,
-        );
-
-  static const String name = 'VideoEditorRoute';
-
-  static const PageInfo<VideoEditorRouteArgs> page =
-      PageInfo<VideoEditorRouteArgs>(name);
-}
-
-class VideoEditorRouteArgs {
-  const VideoEditorRouteArgs({
-    this.key,
-    required this.file,
-  });
-
-  final Key? key;
-
-  final File file;
-
-  @override
-  String toString() {
-    return 'VideoEditorRouteArgs{key: $key, file: $file}';
   }
 }
 

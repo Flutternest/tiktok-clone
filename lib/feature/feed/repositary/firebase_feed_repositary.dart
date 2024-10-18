@@ -8,12 +8,12 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:tiktokclone/core/utility/app_utility.dart';
 import 'package:tiktokclone/feature/auth/exception/failure.dart';
-import 'package:tiktokclone/feature/post/modal/post.dart';
-import 'package:tiktokclone/feature/post/repositary/post_repositary.dart';
+import 'package:tiktokclone/feature/feed/modal/feed.dart';
+import 'package:tiktokclone/feature/feed/repositary/feed_repositary.dart';
 import 'package:uuid/uuid.dart';
 
-class FirebasePostRepositary extends PostRepositary {
-  FirebasePostRepositary(
+class FirebaseTikTokVideosRepository extends TikTokVideoRepository {
+  FirebaseTikTokVideosRepository(
       {required this.auth,
       required this.firestore,
       required this.firebaseStorage});
@@ -22,13 +22,14 @@ class FirebasePostRepositary extends PostRepositary {
   final FirebaseFirestore firestore;
   final Uuid uuid = const Uuid();
   @override
-  Future<Either<Failure, void>> addPost(
+  Future<Either<Failure, void>> addTikTokVideo(
       String path, String description, String postId) async {
     try {
       final response = await uploadVideoOnFirebaseStorage(path);
       final videoThumbNail = await AppUtils.getImageFromVideo(XFile(path));
-      final downloadbaleVideoThumbnail = await uploadPhotoOnFirebaseStorage(videoThumbNail!);
-      Post post = Post(
+      final downloadbaleVideoThumbnail =
+          await uploadPhotoOnFirebaseStorage(videoThumbNail!);
+      Feed post = Feed(
           videoUrl: response.right,
           postId: postId,
           postedBy: auth.currentUser!.uid,
@@ -37,7 +38,6 @@ class FirebasePostRepositary extends PostRepositary {
           numberOfLikes: 0,
           numberOfViews: 0,
           thumbNailUrl: downloadbaleVideoThumbnail.right,
-          // thumbNailUrl: '',
           description: description);
       await firestore.collection('reels').doc(post.postId).set(post.toMap());
       return Right('');
@@ -78,10 +78,10 @@ class FirebasePostRepositary extends PostRepositary {
   }
 
   @override
-  Future<Either<Failure, List<Post>>> fetchReels() async {
+  Future<Either<Failure, List<Feed>>> fetchTikTokVideos() async {
     try {
       final data = await firestore.collection('reels').get();
-      final reels = data.docs.map((e) => Post.fromMap(e.data())).toList();
+      final reels = data.docs.map((e) => Feed.fromMap(e.data())).toList();
       return Right(reels);
     } catch (e) {
       return Left(Failure(message: e.toString(), errorCode: ''));
@@ -89,13 +89,13 @@ class FirebasePostRepositary extends PostRepositary {
   }
 
   @override
-  Future<Either<Failure, List<Post>>> fetchReelsOfUser(String uid) async {
+  Future<Either<Failure, List<Feed>>> fetcTikTokVideoOfUser(String uid) async {
     try {
       final data = await firestore
           .collection('reels')
           .where('postedBy', isEqualTo: uid)
           .get();
-      final userReels = data.docs.map((e) => Post.fromMap(e.data())).toList();
+      final userReels = data.docs.map((e) => Feed.fromMap(e.data())).toList();
       return Right(userReels);
     } catch (e) {
       return Left(Failure(message: e.toString(), errorCode: ''));

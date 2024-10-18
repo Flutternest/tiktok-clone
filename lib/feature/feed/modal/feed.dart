@@ -1,7 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
-class Post {
+class Feed {
   final String videoUrl;
   final String postId;
   final String postedBy;
@@ -11,7 +11,7 @@ class Post {
   final int numberOfViews;
   final String thumbNailUrl;
   final String description;
-  Post({
+  Feed({
     required this.videoUrl,
     required this.postId,
     required this.postedBy,
@@ -23,7 +23,7 @@ class Post {
     required this.description,
   });
 
-  Post copyWith({
+  Feed copyWith({
     String? videoUrl,
     String? postId,
     String? postedBy,
@@ -34,7 +34,7 @@ class Post {
     String? thumbNailUrl,
     String? description,
   }) {
-    return Post(
+    return Feed(
       videoUrl: videoUrl ?? this.videoUrl,
       postId: postId ?? this.postId,
       postedBy: postedBy ?? this.postedBy,
@@ -61,8 +61,8 @@ class Post {
     };
   }
 
-  factory Post.fromMap(Map<String, dynamic> map) {
-    return Post(
+  factory Feed.fromMap(Map<String, dynamic> map) {
+    return Feed(
       videoUrl: map['videoUrl'] as String,
       postId: map['postId'] as String,
       postedBy: map['postedBy'] as String,
@@ -77,7 +77,8 @@ class Post {
 
   String toJson() => json.encode(toMap());
 
-  factory Post.fromJson(String source) => Post.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory Feed.fromJson(String source) =>
+      Feed.fromMap(json.decode(source) as Map<String, dynamic>);
 
   @override
   String toString() {
@@ -87,29 +88,29 @@ class Post {
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
-  
-    return other is Post &&
-      other.videoUrl == videoUrl &&
-      other.postId == postId &&
-      other.postedBy == postedBy &&
-      other.createdTime == createdTime &&
-      other.numberOfComments == numberOfComments &&
-      other.numberOfLikes == numberOfLikes &&
-      other.numberOfViews == numberOfViews &&
-      other.thumbNailUrl == thumbNailUrl &&
-      other.description == description;
+
+    return other is Feed &&
+        other.videoUrl == videoUrl &&
+        other.postId == postId &&
+        other.postedBy == postedBy &&
+        other.createdTime == createdTime &&
+        other.numberOfComments == numberOfComments &&
+        other.numberOfLikes == numberOfLikes &&
+        other.numberOfViews == numberOfViews &&
+        other.thumbNailUrl == thumbNailUrl &&
+        other.description == description;
   }
 
   @override
   int get hashCode {
     return videoUrl.hashCode ^
-      postId.hashCode ^
-      postedBy.hashCode ^
-      createdTime.hashCode ^
-      numberOfComments.hashCode ^
-      numberOfLikes.hashCode ^
-      numberOfViews.hashCode ^
-      thumbNailUrl.hashCode ^
-      description.hashCode;
+        postId.hashCode ^
+        postedBy.hashCode ^
+        createdTime.hashCode ^
+        numberOfComments.hashCode ^
+        numberOfLikes.hashCode ^
+        numberOfViews.hashCode ^
+        thumbNailUrl.hashCode ^
+        description.hashCode;
   }
 }

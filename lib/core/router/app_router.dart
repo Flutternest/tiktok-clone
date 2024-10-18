@@ -10,8 +10,7 @@ import 'package:tiktokclone/feature/auth/signup_page.dart';
 import 'package:tiktokclone/feature/auth/welcome_page.dart';
 import 'package:tiktokclone/feature/home/base_page.dart';
 import 'package:tiktokclone/feature/home/home_page.dart';
-import 'package:tiktokclone/feature/post/creating_post.dart';
-import 'package:tiktokclone/feature/post/video_editor.dart';
+import 'package:tiktokclone/feature/feed/creating_feed.dart';
 import 'package:tiktokclone/feature/user/change_bio_page.dart';
 import 'package:tiktokclone/feature/user/change_name_page.dart';
 import 'package:tiktokclone/feature/user/edit_profile.dart';
@@ -42,7 +41,6 @@ class AppRouter extends _$AppRouter {
         AutoRoute(page: EditProfileRoute.page),
         AutoRoute(page: CreatingPostRoute.page),
         AutoRoute(page: ChangeNameRoute.page),
-        AutoRoute(page: VideoEditorRoute.page),
         AutoRoute(page: ChangeBioRoute.page),
       ];
 }

@@ -9,14 +9,14 @@ import 'package:tiktokclone/feature/home/home_page.dart';
 import 'package:tiktokclone/feature/home/modals/reel_model.dart';
 import 'package:tiktokclone/feature/home/shimmer/home_page_shimmer.dart';
 import 'package:tiktokclone/feature/home/utils/convert_numbers_to_short.dart';
-import 'package:tiktokclone/feature/post/modal/post.dart';
+import 'package:tiktokclone/feature/feed/modal/feed.dart';
 import 'package:tiktokclone/feature/user/provider/user_provider.dart';
 import 'package:tiktokclone/feature/user/user_provider/user_repositary.dart';
 
 import '../../comment/views/comment_bottomsheet.dart';
 
 class ScreenOptions extends ConsumerStatefulWidget {
-  final Post item;
+  final Feed item;
   final bool showVerifiedTick;
   final Function(String)? onShare;
   final Function(String)? onLike;

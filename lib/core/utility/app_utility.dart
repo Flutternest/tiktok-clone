@@ -31,39 +31,14 @@ class AppUtils {
     }
   }
 
-  static Future<int> _getFileSize(String path) async {
-    final fileBytes = await File(path).readAsBytes();
-    return fileBytes.lengthInBytes;
-  }
-
   static Future<File?> compress(String path, String postId) async {
     Directory tempDir = await getTemporaryDirectory();
-    final sizeOfFile = await _getFileSize(path);
-    print(sizeOfFile);
-    final outputPath = "${tempDir.path}/${postId}.mp4";
-    final String command ='-y -i $path  -c:v libx264 -b:a 44100 -crf 30 -ar 22050 -tune fastdecode -preset ultrafast $outputPath';
+    final outputPath = "${tempDir.path}/$postId.mp4";
+    final String command =
+        '-y -i $path  -c:v libx264 -b:a 44100 -crf 30 -ar 22050 -tune fastdecode -preset ultrafast $outputPath';
     await FFmpegKit.execute(command);
     return File(outputPath);
   }
-
-  // static Future<void> compressVideo(String path) async {
-  //   FFmpegKit.executeAsync(
-  //       "-i $path -c:a copy -c:v libx264 -s 848x360 output.mp4",
-  //       (session) async {
-  //     final returnCode = await session.getReturnCode();
-  //     if (ReturnCode.isSuccess(returnCode)) {
-  //       print("success");
-  //       // SUCCESS
-  //     } else if (ReturnCode.isCancel(returnCode)) {
-  //       print("cancel");
-  //       // CANCEL
-  //     } else {
-  //       print("Error");
-  //       print(await session.getFailStackTrace());
-  //       // ERROR
-  //     }
-  //   });
-  // }
 
   static String? passwordValidate(String? value) {
     if (value!.isNotEmpty) {
@@ -117,6 +92,15 @@ class AppUtils {
         preferredCameraDevice: CameraDevice.front,
         maxDuration: const Duration(minutes: 1),
         source: ImageSource.camera);
+    return image;
+  }
+
+  static Future<XFile?> videoPickerFromGallery() async {
+    final ImagePicker picker = ImagePicker();
+    XFile? image = await picker.pickVideo(
+        preferredCameraDevice: CameraDevice.front,
+        maxDuration: const Duration(minutes: 1),
+        source: ImageSource.gallery);
     return image;
   }
 

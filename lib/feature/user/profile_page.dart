@@ -7,11 +7,8 @@ import 'package:tiktokclone/core/constants/paths.dart';
 import 'package:tiktokclone/core/router/app_router.dart';
 import 'package:tiktokclone/core/theme/text_theme.dart';
 import 'package:tiktokclone/core/utility/design_utility.dart';
-import 'package:tiktokclone/feature/auth/model/user.dart';
-import 'package:tiktokclone/feature/auth/repositary/auth_repositary.dart';
 import 'package:tiktokclone/feature/user/profile_page_shimmer.dart';
 import 'package:tiktokclone/feature/user/provider/user_provider.dart';
-import 'package:tiktokclone/feature/user/user_provider/user_repositary.dart';
 
 @RoutePage()
 class ProfilePage extends ConsumerStatefulWidget {

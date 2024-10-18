@@ -12,8 +12,8 @@ import 'package:tiktokclone/feature/auth/provider/auth_provider.dart';
 import 'package:tiktokclone/feature/auth/repositary/auth_repositary.dart';
 import 'package:tiktokclone/feature/user/user_provider/user_repositary.dart';
 
-class FirebaseAuthRepositary implements AuthRepository {
-  FirebaseAuthRepositary({required this.auth, required this.ref});
+class FirebaseAuthRepository implements AuthRepository {
+  FirebaseAuthRepository({required this.auth, required this.ref});
 
   final FirebaseAuth auth;
   final Ref ref;
